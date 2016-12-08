@@ -27,3 +27,30 @@ double str2double(string str)
 	ss >> res;
 	return res;
 }
+
+string int2str(int i)
+{
+	stringstream ss;
+	ss << i;
+	string res;
+	ss >> res;
+	return res;
+}
+
+string float2str(float f)
+{
+	stringstream ss;
+	ss << f;
+	string res;
+	ss >> res;
+	return res;
+}
+
+string double2str(double d)
+{
+	stringstream ss;
+	ss << d;
+	string res;
+	ss >> res;
+	return res;
+}

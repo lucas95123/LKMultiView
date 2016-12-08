@@ -18,61 +18,55 @@ using namespace cv;
 
 int main(int argc, char ** argv)
 {
-	//string strDirPath = argv[1];
-	//int iRectNum = 2;
-	//if(argv[2]!=nullptr)
-	//	iRectNum = str2int(argv[2]);
+	string strDirPath = argv[1];
+	int iRectNum = 5;
+	if(argv[2]!=nullptr)
+		iRectNum = str2int(argv[2]);
 
-	//vector<string> vecImgNames = Directory::GetListFiles(strDirPath, "*.png");
-	//map<string, CameraParameter> mapCameraParam;
-	//try {
-	//	readCameraParameters(mapCameraParam, "./templeSR_par.txt");	
-	//}
-	//catch (BaseException e)
-	//{
-	//	cout<<e.what()<<endl;
-	//	exit(1);
-	//}
-	if (argc != 3)
+	vector<string> vecImgNames = Directory::GetListFiles(strDirPath, "*.png", false);
+	vector<CameraParameter> vecCameraParam;
+	try {
+		readCameraParameters(vecCameraParam, strDirPath+"/temple.txt");	
+	}
+	catch (BaseException e)
 	{
-		cout << "Usage: ./ImageRectification img1_path img2_path" << endl;
-		exit(0);
+		cout<<e.what()<<endl;
+		exit(1);
 	}
 
-	string strDirPath = argv[1];
-	strDirPath = strDirPath.substr(0, strDirPath.find_last_of('\\'));
+	//read the reference image
+	Mat matImgRef=imread(vecImgNames[0]);
 
-	//the first image as the reference image, rectify
-	Mat matImgL, matImgR;
-	matImgL = imread(argv[1]);
-	matImgR = imread(argv[2]);
+	//caculate RT between every frame and the reference frame
+	for (int i = 1; i < vecImgNames.size(); i++)
+	{
+		//read the current image
+		Mat matImgL, matImgR;
+		matImgL = imread(strDirPath + "/" + vecImgNames[i - 1]);
+		matImgR = imread(strDirPath + "/" + vecImgNames[i]);
 
-	//Finding Correspondence with SIFT descriptor and RANSAC the result
-	vector<pair<Point2f, Point2f>> matchPointPairsLR;
-	vector<pair<Point2f, Point2f>> strongMatchPtsLR;
-	getKeypointMatchesWithAllAlgorithms(matImgL, matImgR, matchPointPairsLR);
+		//find the correspondence with SIFT descriptor and RANSAC the result
+		vector<pair<Point2f, Point2f>> matchPointPairsLR;
+		getKeypointMatchesWithAllAlgorithms(matImgL, matImgR, matchPointPairsLR);
 
-	//Convert and array of point pairs to two array of points
-	vector<Point2f> matchedPtsL, matchedPtsR;
-	pointPairToPoints(matchPointPairsLR, matchedPtsL, matchedPtsR);
+		//visualize matching results
+		Mat matched = visualizeKeypointMatches(matImgL, matImgR, matchPointPairsLR);
+		imwrite(strDirPath + "/matched_"+int2str(i-1)+"_"+int2str(i)+".jpg", matched);
 
-	//Calculate Fundamental matrix and remove outliers with RANSAC
-	Mat mask;
-	vector<Point2f> strongMatchedPtsL, strongMatchedPtsR;
-	Mat F = findFundamentalMat(matchedPtsL, matchedPtsR, CV_FM_RANSAC,3.0,0.989999999999999999999999999, mask);
-	removeOutliers(matchPointPairsLR, strongMatchPtsLR, mask);
-	removeOutliers(matchedPtsL, matchedPtsR, strongMatchedPtsL, strongMatchedPtsR, mask);
-	
-	//Visualize matching results
-	Mat matched = visualizeKeypointMatches(matImgL, matImgR, strongMatchPtsLR);
-	imwrite(strDirPath+"/matched.png", matched);
+		//convert an array of point pairs to two array of points
+		vector<Point2f> matchedPtsL, matchedPtsR;
+		pointPairToPoints(matchPointPairsLR, matchedPtsL, matchedPtsR);
 
-	//Rectify image with Fundamental matrix
-	Mat rectifiedL, rectifiedR;
-	vector<pair<Point2f, Point2f>> retifiedPtsLR;
-	rectifyImagePair(strongMatchedPtsL, strongMatchedPtsR, F, matImgL, matImgR, rectifiedL, rectifiedR, retifiedPtsLR);
+		//calculate fundamental matrix using 8-point algorithm
+		Mat mask;
+		Mat F = findFundamentalMat(matchedPtsL, matchedPtsR, CV_FM_8POINT);
 
-	//Visualize matching results
-	Mat matched1 = visualizeKeypointMatches(rectifiedL, rectifiedR, retifiedPtsLR);
-	imwrite(strDirPath+"/matched_rectified.png", matched1);
+		//calculate essential matrix from fundamental matrix and camera intrinsics
+		Mat K = vecCameraParam[i].K;
+		Mat E = K.t()*F*K;
+
+		decomposeEssentialMatrix(E, vecCameraParam[i].R, vecCameraParam[i].T);
+	}
+
+	system("pause");
 }

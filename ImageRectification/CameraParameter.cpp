@@ -6,27 +6,27 @@ CameraParameter::CameraParameter()
 
 }
 
-CameraParameter::CameraParameter(float * k, float * r, float * t)
+CameraParameter::CameraParameter(double * k, double * r, double * t)
 {
-	K = Mat(3, 3, CV_32FC1);
+	K = Mat(3, 3, CV_64FC1);
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
-			K.at<float>(i, j) = k[i * 3 + j];
-	R = Mat(3, 3, CV_32FC1);
+			K.at<double>(i, j) = k[i * 3 + j];
+	R = Mat(3, 3, CV_64FC1);
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
-			R.at<float>(i, j) = r[i * 3 + j];
-	T = Mat(3, 1, CV_32FC1);
+			R.at<double>(i, j) = r[i * 3 + j];
+	T = Mat(3, 1, CV_64FC1);
 	for (int i = 0; i < 3; i++)
-		T.at<float>(i, 0) = t[i];
+		T.at<double>(i, 0) = t[i];
 }
 
-void CameraParameter::setIntrinsicParam(float * k)
+void CameraParameter::setIntrinsicParam(double * k)
 {
-	K = Mat(3, 3, CV_32FC1);
+	K = Mat(3, 3, CV_64FC1);
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
-			K.at<float>(i, j) = k[i * 3 + j];
+			K.at<double>(i, j) = k[i * 3 + j];
 }
 
 Mat CameraParameter::getIntrinsicParam()
@@ -34,12 +34,12 @@ Mat CameraParameter::getIntrinsicParam()
 	return K;
 }
 
-void CameraParameter::setExtrinsicParamR(float * r)
+void CameraParameter::setExtrinsicParamR(double * r)
 {
-	R = Mat(3, 3, CV_32FC1);
+	R = Mat(3, 3, CV_64FC1);
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
-			R.at<float>(i, j) = r[i * 3 + j];
+			R.at<double>(i, j) = r[i * 3 + j];
 }
 
 Mat CameraParameter::getExtrinsicParamR()
@@ -47,11 +47,11 @@ Mat CameraParameter::getExtrinsicParamR()
 	return R;
 }
 
-void CameraParameter::setExtrinsicParamT(float * t)
+void CameraParameter::setExtrinsicParamT(double * t)
 {
-	T = Mat(3, 1, CV_32FC1);
+	T = Mat(3, 1, CV_64FC1);
 	for (int i = 0; i < 3; i++)
-		T.at<float>(i, 0) = t[i];
+		T.at<double>(i, 0) = t[i];
 }
 
 Mat CameraParameter::getExtrinsicParamT()

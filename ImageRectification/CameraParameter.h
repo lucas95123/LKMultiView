@@ -7,18 +7,18 @@ using namespace cv;
 
 class CameraParameter
 {
-private:
+public:
 	Mat K;
 	Mat R;
 	Mat T;
-public:
+
 	CameraParameter();
-	CameraParameter(float *k, float *r, float *t);
-	void setIntrinsicParam(float *k);
+	CameraParameter(double *k, double *r, double *t);
+	void setIntrinsicParam(double *k);
 	Mat getIntrinsicParam();
-	void setExtrinsicParamR(float *r);
+	void setExtrinsicParamR(double *r);
 	Mat getExtrinsicParamR();
-	void setExtrinsicParamT(float *t);
+	void setExtrinsicParamT(double *t);
 	Mat getExtrinsicParamT();
 	void print();
 };
