@@ -72,10 +72,12 @@ void decomposeEssentialMatrix(Mat &E, Mat &R, Mat&T)
 	//perfrom SVD on E
 	SVD svd = SVD(E);
 	Matx33d W(0, -1, 0, 1, 0, 0, 0, 0, 1);
-	Mat_<double> r = svd.u * Mat(W) * svd.vt;
-	Mat_<double> t = svd.u.col(2);
-	Matx34d P1(r(0, 0), r(0, 1), r(0, 2), t(0), r(1, 0), r(1, 1), r(1, 2), t(1),r(2, 0),r(2, 1), r(2, 2), t(2));
+	R = svd.u * Mat(W) * svd.vt;
+	T = svd.u.col(2);
+	//Matx34d P1(r(0, 0), r(0, 1), r(0, 2), t(0), r(1, 0), r(1, 1), r(1, 2), t(1),r(2, 0),r(2, 1), r(2, 2), t(2));
 
+	cout << "Rotation Matrix" << endl;
 	cout << R << endl;
-	cout << t << endl;
+	cout << "Transition Matrix" << endl;
+	cout << T << endl;
 }

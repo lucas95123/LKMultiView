@@ -60,11 +60,27 @@ int main(int argc, char ** argv)
 		//calculate fundamental matrix using 8-point algorithm
 		Mat mask;
 		Mat F = findFundamentalMat(matchedPtsL, matchedPtsR, CV_FM_8POINT);
+		cout << "Fundamental matrix" << endl;
+		cout << F << endl;
+
+		//save the rectified image for debugging
+		vector<pair<Point2f, Point2f>> warpedMatchPtsPairLR;
+		Mat rectImgL, rectImgR;
+		rectifyImagePair(matchedPtsL, matchedPtsR, F, matImgL, matImgR, rectImgL, rectImgR, warpedMatchPtsPairLR);
+		Mat matched1 = visualizeKeypointMatches(rectImgL, rectImgR, warpedMatchPtsPairLR);
+		imwrite(strDirPath + "/rectified_" + int2str(i - 1) + "_" + int2str(i) + ".jpg", matched1);
 
 		//calculate essential matrix from fundamental matrix and camera intrinsics
-		Mat K = vecCameraParam[i].K;
-		Mat E = K.t()*F*K;
+		Mat K1 = vecCameraParam[i - 1].K;
+		Mat K2 = vecCameraParam[i].K;
+		cout << "Intrinsic matrix" << endl;
+		cout << K1 << endl;
+		cout << K2 << endl;
+		Mat E = K2.t()*F*K1;
+		cout << "Essential matrix" << endl;
+		cout << E << endl;
 
+		//decompse the essential matrix by SVD to get the rotation and translation between two camera
 		decomposeEssentialMatrix(E, vecCameraParam[i].R, vecCameraParam[i].T);
 	}
 

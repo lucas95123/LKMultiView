@@ -12,8 +12,6 @@ void rectifyImagePair(
 {
 	Mat H1, H2;
 	stereoRectifyUncalibrated(ptsL, ptsR, F, Size(imageL.cols, imageL.rows), H1, H2);
-	printMat(H1);
-	printMat(H2);
 	warpPerspective(imageL, rectifiedL, H1, Size(imageL.cols, imageL.rows), INTER_CUBIC);
 	warpPerspective(imageR, rectifiedR, H2, Size(imageL.cols, imageL.rows), INTER_CUBIC);
 	for (int i=0;i<ptsL.size();i++)
