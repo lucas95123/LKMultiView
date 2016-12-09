@@ -4,8 +4,7 @@
 #include "CameraParameter.h"
 #include "Exceptions.h"
 
-#include <opencv2\core.hpp>
-#include <opencv2\highgui.hpp>
+#include <opencv2\opencv.hpp>
 
 /*IO*/
 void readCameraParameters(vector<CameraParameter> &mapCameraParam, string path);

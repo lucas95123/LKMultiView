@@ -1,14 +1,12 @@
 #pragma once
 #include <iostream>
 
-#include <opencv2\core.hpp>
-#include <opencv2\calib3d.hpp>
-#include <opencv2\features2d.hpp>
-#include <opencv2\highgui.hpp>
-#include <opencv2\nonfree\nonfree.hpp>
+#include <opencv2\opencv.hpp>
+#include <opencv2\xfeatures2d.hpp>
 
 using namespace std;
 using namespace cv;
+using namespace xfeatures2d;
 
 void getKeypointMatchesWithBRISK(
 	const Mat& imageL,

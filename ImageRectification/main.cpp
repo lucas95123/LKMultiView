@@ -8,10 +8,7 @@
 #include "KeyPointMatcher.h"
 #include "Rectification.h"
 
-#include <opencv2\core.hpp>
-#include <opencv2\highgui.hpp>
-#include <opencv2\contrib\contrib.hpp>
-#include <opencv2\calib3d.hpp>
+#include <opencv2\opencv.hpp>
 
 using namespace std;
 using namespace cv;
@@ -23,7 +20,7 @@ int main(int argc, char ** argv)
 	if(argv[2]!=nullptr)
 		iRectNum = str2int(argv[2]);
 
-	vector<string> vecImgNames = Directory::GetListFiles(strDirPath, "*.png", false);
+	vector<string> vecImgNames = getListFiles(strDirPath, "png", false);
 	vector<CameraParameter> vecCameraParam;
 	try {
 		readCameraParameters(vecCameraParam, strDirPath+"/temple.txt");	
@@ -42,8 +39,8 @@ int main(int argc, char ** argv)
 	{
 		//read the current image
 		Mat matImgL, matImgR;
-		matImgL = imread(strDirPath + "/" + vecImgNames[i - 1]);
-		matImgR = imread(strDirPath + "/" + vecImgNames[i]);
+		matImgL = imread(vecImgNames[i - 1]);
+		matImgR = imread(vecImgNames[i]);
 
 		//find the correspondence with SIFT descriptor and RANSAC the result
 		vector<pair<Point2f, Point2f>> matchPointPairsLR;
@@ -57,31 +54,42 @@ int main(int argc, char ** argv)
 		vector<Point2f> matchedPtsL, matchedPtsR;
 		pointPairToPoints(matchPointPairsLR, matchedPtsL, matchedPtsR);
 
-		//calculate fundamental matrix using 8-point algorithm
-		Mat mask;
-		Mat F = findFundamentalMat(matchedPtsL, matchedPtsR, CV_FM_8POINT);
-		cout << "Fundamental matrix" << endl;
-		cout << F << endl;
+		//find the essential matrix
+		Mat E=findEssentialMat(matchedPtsL, matchedPtsR, vecCameraParam[i].K);
+		
+		//decompose the essential matrix to extract rotation and translation
+		Mat R1, R2, t;
+		decomposeEssentialMat(E, R1, R2, t);
 
-		//save the rectified image for debugging
-		vector<pair<Point2f, Point2f>> warpedMatchPtsPairLR;
-		Mat rectImgL, rectImgR;
-		rectifyImagePair(matchedPtsL, matchedPtsR, F, matImgL, matImgR, rectImgL, rectImgR, warpedMatchPtsPairLR);
-		Mat matched1 = visualizeKeypointMatches(rectImgL, rectImgR, warpedMatchPtsPairLR);
-		imwrite(strDirPath + "/rectified_" + int2str(i - 1) + "_" + int2str(i) + ".jpg", matched1);
+		cout << R1 << endl;
+		cout << R2 << endl;
+		cout << t << endl;
 
-		//calculate essential matrix from fundamental matrix and camera intrinsics
-		Mat K1 = vecCameraParam[i - 1].K;
-		Mat K2 = vecCameraParam[i].K;
-		cout << "Intrinsic matrix" << endl;
-		cout << K1 << endl;
-		cout << K2 << endl;
-		Mat E = K2.t()*F*K1;
-		cout << "Essential matrix" << endl;
-		cout << E << endl;
+		////calculate fundamental matrix using 8-point algorithm
+		//Mat mask;
+		//Mat F = findFundamentalMat(matchedPtsL, matchedPtsR, CV_FM_8POINT);
+		//cout << "Fundamental matrix" << endl;
+		//cout << F << endl;
 
-		//decompse the essential matrix by SVD to get the rotation and translation between two camera
-		decomposeEssentialMatrix(E, vecCameraParam[i].R, vecCameraParam[i].T);
+		////save the rectified image for debugging
+		//vector<pair<Point2f, Point2f>> warpedMatchPtsPairLR;
+		//Mat rectImgL, rectImgR;
+		//rectifyImagePair(matchedPtsL, matchedPtsR, F, matImgL, matImgR, rectImgL, rectImgR, warpedMatchPtsPairLR);
+		//Mat matched1 = visualizeKeypointMatches(rectImgL, rectImgR, warpedMatchPtsPairLR);
+		//imwrite(strDirPath + "/rectified_" + int2str(i - 1) + "_" + int2str(i) + ".jpg", matched1);
+
+		////calculate essential matrix from fundamental matrix and camera intrinsics
+		//Mat K1 = vecCameraParam[i - 1].K;
+		//Mat K2 = vecCameraParam[i].K;
+		//cout << "Intrinsic matrix" << endl;
+		//cout << K1 << endl;
+		//cout << K2 << endl;
+		//Mat E = K2.t()*F*K1;
+		//cout << "Essential matrix" << endl;
+		//cout << E << endl;
+
+		////decompse the essential matrix by SVD to get the rotation and translation between two camera
+		//decomposeEssentialMatrix(E, vecCameraParam[i].R, vecCameraParam[i].T);
 	}
 
 	system("pause");

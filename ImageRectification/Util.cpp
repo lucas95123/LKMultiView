@@ -54,3 +54,33 @@ string double2str(double d)
 	ss >> res;
 	return res;
 }
+
+vector<string> getListFiles(string path, string ext, bool addPath)
+{
+	//fil ehandle
+	long   hFile = 0;
+	//file info
+	struct _finddata_t fileinfo;
+	string pathName, exdName;
+	vector<string> files;
+
+	if (0 != strcmp(ext.c_str(), ""))
+	{
+		exdName = "\\*." + ext;
+	}
+	else
+	{
+		exdName = "\\*";
+	}
+
+	if ((hFile = _findfirst(pathName.assign(path).append(exdName).c_str(), &fileinfo)) != -1)
+	{
+		do
+		{
+				if (strcmp(fileinfo.name, ".") != 0 && strcmp(fileinfo.name, "..") != 0)
+					files.push_back(pathName.assign(path).append("\\").append(fileinfo.name));
+		} while (_findnext(hFile, &fileinfo) == 0);
+		_findclose(hFile);
+	}
+	return files;
+}

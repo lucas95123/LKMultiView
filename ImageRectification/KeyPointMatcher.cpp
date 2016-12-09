@@ -12,7 +12,7 @@ void getKeypointMatchesWithBRISK(
 	Mat descL, descR;
 	vector<DMatch> goodMatches;
 
-	Ptr<BRISK> brisk = BRISK::create("BRISK");
+	Ptr<BRISK> brisk = BRISK::create();
 	brisk->detect(imageL, kptsL);
 	brisk->detect(imageR, kptsR);
 	brisk->compute(imageL, kptsL, descL);
@@ -64,7 +64,7 @@ void getKeypointMatchesWithORB(
 	Mat descL, descR;
 	vector<DMatch> goodMatches;
 
-	Ptr<ORB> orb = ORB::create("ORB");
+	Ptr<ORB> orb = ORB::create();
 	orb->detect(imageL, kptsL);
 	orb->detect(imageR, kptsR);
 	orb->compute(imageL, kptsL, descL);
@@ -109,8 +109,6 @@ void getKeypointMatchesWithSIFT(
 	const Mat& imageR,
 	vector< pair<Point2f, Point2f> >& matchPointPairsLR) {
 
-	initModule_nonfree();
-
 	static const int kFlannMaxDistScale = 3;
 	static const double kFlannMaxDistThreshold = 0.04;
 
@@ -118,7 +116,7 @@ void getKeypointMatchesWithSIFT(
 	vector<KeyPoint> kptsL, kptsR;
 	vector<DMatch> goodMatches;
 
-	Ptr<SIFT> sift = SIFT::create("SIFT");
+	Ptr<SIFT> sift = SIFT::create();
 	sift->detect(imageL, kptsL);
 	sift->detect(imageR, kptsR);
 	sift->compute(imageL, kptsL, descL);
