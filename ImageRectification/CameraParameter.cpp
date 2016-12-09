@@ -3,65 +3,95 @@
 
 CameraParameter::CameraParameter()
 {
-
+	Matx33d matR;
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			K(i, j) = 0;
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			matR(i, j) = 0;
+	for (int i = 0; i<3; i++)
+		T(i) = 0;
 }
 
 CameraParameter::CameraParameter(double * k, double * r, double * t)
 {
-	K = Mat(3, 3, CV_64FC1);
+	Matx33d matR;
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
-			K.at<double>(i, j) = k[i * 3 + j];
-	R = Mat(3, 3, CV_64FC1);
+			K(i, j) = k[i * 3 + j];
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
-			R.at<double>(i, j) = r[i * 3 + j];
-	T = Mat(3, 1, CV_64FC1);
-	for (int i = 0; i < 3; i++)
-		T.at<double>(i, 0) = t[i];
+			matR(i, j) = r[i * 3 + j];
+	Rodrigues(matR, R);
+	for(int i=0;i<3;i++)
+		T(i) = t[i];
 }
 
 void CameraParameter::setIntrinsicParam(double * k)
 {
-	K = Mat(3, 3, CV_64FC1);
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
-			K.at<double>(i, j) = k[i * 3 + j];
-}
-
-Mat CameraParameter::getIntrinsicParam()
-{
-	return K;
+			K(i, j) = k[i * 3 + j];
 }
 
 void CameraParameter::setExtrinsicParamR(double * r)
 {
-	R = Mat(3, 3, CV_64FC1);
+	Matx33d matR;
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
-			R.at<double>(i, j) = r[i * 3 + j];
-}
-
-Mat CameraParameter::getExtrinsicParamR()
-{
-	return R;
+			matR(i, j) = r[i * 3 + j];
+	Rodrigues(matR, R);
 }
 
 void CameraParameter::setExtrinsicParamT(double * t)
 {
-	T = Mat(3, 1, CV_64FC1);
 	for (int i = 0; i < 3; i++)
-		T.at<double>(i, 0) = t[i];
+		T(i) = t[i];
 }
 
-Mat CameraParameter::getExtrinsicParamT()
+Mat CameraParameter::getProjectionMatrix()
 {
-	return T;
+	Mat_<double> matR;
+	Rodrigues(R, matR);
+	Matx34d matExtrinsix = Matx34d(matR(0, 0), matR(0, 1), matR(0, 2), T(0), matR(1, 0), matR(1, 1), matR(1, 2), T(1), matR(2, 0), matR(2, 1), matR(2, 2), T(2));
+	return Mat(K)*Mat(matExtrinsix);
 }
 
 void CameraParameter::print()
 {
-	printMat(K);
-	printMat(R);
-	printMat(T);
+	cout << Mat(K);
+	cout << Mat(R);
+	cout << Mat(T);
+}
+
+void CameraParameter::setAsReference()
+{
+	Matx33d matR;
+	m_isReference = true;
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			if (i == j)
+				matR(i, j) = 1.0;
+			else
+				matR(i, j) = 0.0;
+	Rodrigues(matR, R);
+	for (int i = 0; i < 3; i++)
+		T(i) = 0.0;
+}
+
+bool CameraParameter::isReference()
+{
+	return m_isReference;
+}
+
+void CameraParameter::writeCameraPose(ofstream & fout)
+{
+	Mat matR;
+	Rodrigues(R, matR);
+	for (int i = 0; i < 9; i++)
+		fout << matR.at<double>(i) << " ";
+	for (int i = 0; i < 3; i++)
+		fout << T(i) << " ";
+	fout << endl;
 }

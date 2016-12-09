@@ -37,6 +37,11 @@ void readCameraParameters(vector<CameraParameter> &vecCameraParam, string path)
 	delete[] k, r, t;
 }
 
+void writeMat(Mat & matData, string strPath)
+{
+
+}
+
 void printArray(const float *pfArr, int iCount)
 {
 	for (int i = 0; i < iCount; i++)
@@ -44,6 +49,19 @@ void printArray(const float *pfArr, int iCount)
 		cout << pfArr[i] << " ";
 	}
 	cout << endl;
+}
+
+void writeMat(ofstream & fout, const Mat & refMat)
+{
+	for (int i = 0; i < refMat.rows; i++)
+	{
+		for (int j = 0; j < refMat.cols; j++)
+		{
+			for(int k=0;k<3;k++)
+				fout << refMat.at<Vec3f>(i, j)[k] << " ";
+		}
+		fout << endl;
+	}
 }
 
 void printMat(const Mat &refMat)
@@ -80,4 +98,44 @@ void decomposeEssentialMatrix(Mat &E, Mat &R, Mat&T)
 	cout << R << endl;
 	cout << "Transition Matrix" << endl;
 	cout << T << endl;
+}
+
+// Checks if a matrix is a valid rotation matrix.
+bool isRotationMatrix(Mat &R)
+{
+	Mat Rt;
+	transpose(R, Rt);
+	Mat shouldBeIdentity = Rt * R;
+	Mat I = Mat::eye(3, 3, shouldBeIdentity.type());
+
+	return  norm(I, shouldBeIdentity) < 1e-6;
+
+}
+
+// Calculates rotation matrix to euler angles
+// The result is the same as MATLAB except the order
+// of the euler angles ( x and z are swapped ).
+Vec3f rotationMatrixToEulerAngles(Mat &R)
+{
+
+	assert(isRotationMatrix(R));
+
+	float sy = sqrt(R.at<double>(0, 0) * R.at<double>(0, 0) + R.at<double>(1, 0) * R.at<double>(1, 0));
+
+	bool singular = sy < 1e-6; // If
+
+	float x, y, z;
+	if (!singular)
+	{
+		x = atan2(R.at<double>(2, 1), R.at<double>(2, 2));
+		y = atan2(-R.at<double>(2, 0), sy);
+		z = atan2(R.at<double>(1, 0), R.at<double>(0, 0));
+	}
+	else
+	{
+		x = atan2(-R.at<double>(1, 2), R.at<double>(1, 1));
+		y = atan2(-R.at<double>(2, 0), sy);
+		z = 0;
+	}
+	return Vec3f(x, y, z);
 }
