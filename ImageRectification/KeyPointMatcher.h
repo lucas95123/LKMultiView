@@ -49,3 +49,14 @@ void removeOutliers(
 	const vector<pair<Point2f, Point2f>>& matchedPtsLR,
 	vector<pair<Point2f, Point2f>>& strongMatchPtsLR,
 	const Mat & mask);
+
+// rectify the image Pair with the fundamental matrix caculated by point correspondence
+void rectifyImagePair(
+	const vector<Point2f> &ptsL,
+	const vector<Point2f> &ptsR,
+	const Mat &F,
+	const Mat &imageL,
+	const Mat &imageR,
+	Mat &rectifiedL,
+	Mat &rectifiedR,
+	vector<pair<Point2f, Point2f>> &wPtsLR);

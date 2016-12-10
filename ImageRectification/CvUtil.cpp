@@ -112,6 +112,39 @@ bool isRotationMatrix(Mat &R)
 
 }
 
+// Convert from cv::Mat to std::vector
+void mat2vec4d(const Mat & matIn, vector<Vec4f>& vecOut, bool isRowMajor)
+{
+	if (isRowMajor)
+	{
+		for (int i = 0; i < matIn.rows; i++)
+		{
+
+			Vec4f P(matIn.at<float>(i, 0),
+				matIn.at<float>(i, 1),
+				matIn.at<float>(i, 2),
+				matIn.at<float>(i, 3));
+			vecOut.push_back(P);
+		}
+	}
+	else
+	{
+		for (int i = 0; i < matIn.cols; i++)
+		{
+
+			Vec4f P(matIn.at<float>(0, i),
+				matIn.at<float>(1, i),
+				matIn.at<float>(2, i),
+				matIn.at<float>(3, i));
+			vecOut.push_back(P);
+		}
+	}
+}
+
+void vec2mat4d(const vector<Vec4f>& vecIn, Mat & matOut)
+{
+}
+
 // Calculates rotation matrix to euler angles
 // The result is the same as MATLAB except the order
 // of the euler angles ( x and z are swapped ).

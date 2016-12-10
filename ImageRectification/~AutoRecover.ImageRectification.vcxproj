@@ -124,7 +124,7 @@
     <ClInclude Include="Exceptions.h" />
     <ClInclude Include="KeyPointMatcher.h" />
     <ClInclude Include="PhotoConsistency.h" />
-    <ClInclude Include="Rectification.h" />
+    <ClInclude Include="DepthReconstruct.h" />
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <ItemGroup>
@@ -133,7 +133,7 @@
     <ClCompile Include="KeyPointMatcher.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="PhotoConsistency.cpp" />
-    <ClCompile Include="Rectification.cpp" />
+    <ClCompile Include="DepthReconstruct.cpp" />
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

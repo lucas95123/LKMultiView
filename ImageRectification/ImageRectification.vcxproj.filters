@@ -30,7 +30,10 @@
     <ClInclude Include="KeyPointMatcher.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Rectification.h">
+    <ClInclude Include="PhotoConsistency.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthReconstruct.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -50,7 +53,10 @@
     <ClCompile Include="Util.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Rectification.cpp">
+    <ClCompile Include="PhotoConsistency.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthReconstruct.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

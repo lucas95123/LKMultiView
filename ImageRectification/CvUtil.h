@@ -6,6 +6,11 @@
 
 #include <opencv2\opencv.hpp>
 
+enum class RGB
+{
+	R, G, B
+};
+
 /*IO*/
 void readCameraParameters(vector<CameraParameter> &mapCameraParam, string path);
 
@@ -27,5 +32,9 @@ void pointPairToPoints(const vector<pair<Point2f, Point2f>> &pairs, vector<Point
 void decomposeEssentialMatrix(Mat &E, Mat &R, Mat &T);
 
 bool isRotationMatrix(Mat &R);
+
+void mat2vec4d(const Mat &matIn, vector<Vec4f> &vecOut, bool isRowMajor);
+
+void vec2mat4d(const vector<Vec4f> &vecIn, Mat &matOut);
 
 Vec3f rotationMatrixToEulerAngles(Mat &R);

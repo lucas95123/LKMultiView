@@ -6,16 +6,15 @@
 #include "Util.h"
 #include "CvUtil.h"
 #include "KeyPointMatcher.h"
-#include "Rectification.h"
+#include "PhotoConsistency.h"
+#include "DepthReconstruct.h"
 
 #include <opencv2\opencv.hpp>
-#include <opencv2\viz.hpp>
 
 #define M_PI 3.1415926536
 
 using namespace std;
 using namespace cv;
-using namespace viz;
 
 int main(int argc, char ** argv)
 {
@@ -81,10 +80,6 @@ int main(int argc, char ** argv)
 		cout << matR << endl;
 		Rodrigues(matR, vecR);
 
-		Vec3f vecEuler=rotationMatrixToEulerAngles((Mat)matR);
-
-		cout << "Euler Angle: " << vecEuler / M_PI * 180 << endl;
-
 		//caculate current rotation and translation vector based on the reference frame
 		composeRT(vecCameraParam[i-1].R, vecCameraParam[i-1].T, vecR, vecT, vecCameraParam[i].R, vecCameraParam[i].T);
 
@@ -92,45 +87,28 @@ int main(int argc, char ** argv)
 		vecCameraParam[i].writeCameraPose(fout);
 
 		//print result
-		cout << "Previous RT:" << endl;
-		cout << vecCameraParam[i - 1].R << endl;
-		cout << vecCameraParam[i - 1].T <<	endl;
-
-		cout << "Current RT:" << endl;
-		cout << vecR << endl;
-		cout << vecT <<	endl;
-
 		cout << "Current RT based on reference:" << endl;
-		cout << vecCameraParam[i].R << endl;
-		cout << vecCameraParam[i].T << endl;
+		cout << "R:" << vecCameraParam[i].R << endl;
+		cout << "t:" << vecCameraParam[i].T << endl;
+		
+		//triangulate the points to verify the result;
+		Mat matPtsH, matPts;
+		triangulatePoints(vecCameraParam[i - 1].getProjectionMatrix(), vecCameraParam[i].getProjectionMatrix(), vecReMatchedPtsL, vecReMatchedPtsR, matPtsH);
 
-		cout << "projection matrix" << endl;
-		cout << vecCameraParam[i - 1].getProjectionMatrix() << endl;
+		//mat to vector for input
+		vector<Vec4f> vecP;
+		mat2vec4d(matPtsH, vecP, false);
 
-		//Mat matPts4D;
-		//triangulatePoints(vecCameraParam[i - 1].getProjectionMatrix(), vecCameraParam[i].getProjectionMatrix(), vecReMatchedPtsL, vecReMatchedPtsR, matPts4D);
-
-		//vector<Vec4f> vecP;
-		//for (int i = 0; i < vecReMatchedPtsL.size(); i++)
-		//{
-
-		//	Vec4f P(matPts4D.at<float>(0, i),
-		//		matPts4D.at<float>(1, i),
-		//		matPts4D.at<float>(2, i),
-		//		matPts4D.at<float>(3, i));
-		//	vecP.push_back(P);
-		//}
-
-		//Mat matPts;
-		////sparse point cloud file
-		//ofstream foutPoint(strDirPath + "/points_"+int2str(i-1)+"_"+int2str(i)+".txt");
-		//convertPointsFromHomogeneous(vecP, matPts);
-		//writeMat(foutPoint, matPts);
-		//fout.close();
+		//sparse point cloud file
+		ofstream foutPoint(strDirPath + "/points_"+int2str(i-1)+"_"+int2str(i)+".txt");
+		convertPointsFromHomogeneous(vecP, matPts);
+		writeMat(foutPoint, matPts);
+		foutPoint.close();
 	}
 	fout.close();
-	int iDepthUpper = 100;
-	int iDepthLower = 1;
+
+	int iDepthLower = 0.0;
+	int iDepthUpper = iDepthLower + 100;
 	//for every pixel in the reference frame caculate depth
 	for (int row = 0; row < matImgRef.rows; row++)
 	{
@@ -141,14 +119,13 @@ int main(int argc, char ** argv)
 			{
 				for (int iImgIndex = 1; iImgIndex < vecCameraParam.size(); iImgIndex++)
 				{
-					vector<Point3d> vecP;
+					vector<Point2d> vecP(1;
 					Mat matVecp;
-					vecP.push_back(Point3d(row, col, d));
 					projectPoints(vecP, vecCameraParam[iImgIndex].R, vecCameraParam[iImgIndex].T, vecCameraParam[iImgIndex].K, noArray(), matVecp);
 					cout << matVecp << endl;
 				}
 			}
 		}
 	}
-
+	system("pause");
 }
