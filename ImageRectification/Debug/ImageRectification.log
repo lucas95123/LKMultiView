@@ -1,6 +1,0 @@
-﻿  main.cpp
-z:\v-kulu\documents\imagerectification\imagerectification\main.cpp(46): warning C4018: “<”: 有符号/无符号不匹配
-z:\v-kulu\documents\imagerectification\imagerectification\main.cpp(110): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
-z:\v-kulu\documents\imagerectification\imagerectification\main.cpp(120): warning C4018: “<”: 有符号/无符号不匹配
-  ImageRectification.vcxproj -> Z:\v-kulu\Documents\ImageRectification\Debug\ImageRectification.exe
-  ImageRectification.vcxproj -> Z:\v-kulu\Documents\ImageRectification\Debug\ImageRectification.pdb (Partial PDB)
