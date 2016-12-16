@@ -1,2 +1,7 @@
-﻿  LKMultiview.vcxproj -> Z:\v-kulu\Documents\LKMultiview\Debug\LKMultiview.exe
-  LKMultiview.vcxproj -> Z:\v-kulu\Documents\LKMultiview\Debug\LKMultiview.pdb (Partial PDB)
+﻿  main.cpp
+z:\v-kulu\documents\lkmultiview\lkmultiview\patch.h(66): warning C4244: “初始化”: 从“double”转换到“int”，可能丢失数据
+z:\v-kulu\documents\lkmultiview\lkmultiview\patch.h(72): warning C4244: “=”: 从“float”转换到“uchar”，可能丢失数据
+z:\v-kulu\documents\lkmultiview\lkmultiview\patch.h(73): warning C4244: “=”: 从“float”转换到“uchar”，可能丢失数据
+z:\v-kulu\documents\lkmultiview\lkmultiview\patch.h(74): warning C4244: “=”: 从“float”转换到“uchar”，可能丢失数据
+  LKMultiView.vcxproj -> Z:\v-kulu\Documents\LKMultiview\Debug\LKMultiView.exe
+  LKMultiView.vcxproj -> Z:\v-kulu\Documents\LKMultiview\Debug\LKMultiView.pdb (Partial PDB)

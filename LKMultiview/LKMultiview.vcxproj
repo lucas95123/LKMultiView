@@ -19,8 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{208C5729-3925-41AB-925A-C7F818281913}</ProjectGuid>
-    <RootNamespace>LKMultiview</RootNamespace>
+    <ProjectGuid>{E623F8D8-12B1-4426-A534-138E38AEA1F4}</ProjectGuid>
+    <RootNamespace>LKMultiView</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -61,14 +61,14 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="OPENCV310.props" />
+    <Import Project="OPENCV310R.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="OPENCV310.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="OPENCV310R.props" />
     <Import Project="OPENCV310.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
@@ -114,22 +114,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="CameraParameter.cpp" />
-    <ClCompile Include="CvUtil.cpp" />
-    <ClCompile Include="DepthReconstruct.cpp" />
-    <ClCompile Include="KeyPointMatcher.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="PhotoConsistency.cpp" />
-    <ClCompile Include="Util.cpp" />
+    <ClInclude Include="Patch.h" />
+    <ClInclude Include="Reconstruct.h" />
+    <ClInclude Include="Tracking.h" />
+    <ClInclude Include="Util.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CameraParameter.h" />
-    <ClInclude Include="CvUtil.h" />
-    <ClInclude Include="DepthReconstruct.h" />
-    <ClInclude Include="Exceptions.h" />
-    <ClInclude Include="KeyPointMatcher.h" />
-    <ClInclude Include="PhotoConsistency.h" />
-    <ClInclude Include="Util.h" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Patch.cpp" />
+    <ClCompile Include="Reconstruct.cpp" />
+    <ClCompile Include="Tracking.cpp" />
+    <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

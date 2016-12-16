@@ -15,49 +15,34 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="CameraParameter.cpp">
+    <ClInclude Include="Patch.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Tracking.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Reconstruct.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Util.h">
       <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="CvUtil.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="DepthReconstruct.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="KeyPointMatcher.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="PhotoConsistency.cpp">
+    <ClCompile Include="Patch.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Reconstruct.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Tracking.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Util.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="CameraParameter.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="CvUtil.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="DepthReconstruct.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Exceptions.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="KeyPointMatcher.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="PhotoConsistency.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="Util.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

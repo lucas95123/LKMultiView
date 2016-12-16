@@ -1,5 +1,4 @@
 #include "Reconstruct.h"
-#include "Patch.h"
 #include "Util.h"
 
 /**@brief project points in the reference frame to other frame with specified depth
@@ -47,8 +46,9 @@ void projectPointWithDepth(const Matx33d &K, Point2f &pt, const Mat &rmat, const
 @param the upper depth bound
 @param the depth step
 */
-float calcDepthFromPCResponse(const Mat& matPC, float dL, float dU, float dS)
+float calcDepthFromPCResponse(const Mat& matPC, Metric metric, float dL, float dU, float dS)
 {
+	//finding the average of PC Response
 	Mat matAvg = Mat(1, matPC.cols, CV_32FC1);
 	for (int col = 0; col < matPC.cols; col++)
 	{
@@ -68,13 +68,92 @@ float calcDepthFromPCResponse(const Mat& matPC, float dL, float dU, float dS)
 			iMax = i;
 		}
 	}
-	if (iMax == 0)
-		return 0;
-	if (dMax < 0.7)
+
+	if (dMax < 0.55)
 		return 0;
 	return	dL + iMax*dS;
 }
 
+/**@calculate the index of the most likely depth using robust NCC
+@param the Photo-Consistency Response matrix
+@param the lower depth bound
+@param the upper depth bound
+@param the depth step
+*/
+float calcDepthFromPCResponseRobust(const Mat& matPC, Metric metric, float dL, float dU, float dS)
+{
+	//finding the average of PC Response
+	Mat matAvg = Mat(1, matPC.cols, CV_32FC1);
+	for (int col = 0; col < matPC.cols; col++)
+	{
+		float sum = 0.0;
+		for (int row = 0; row < matPC.rows; row++)
+			sum += matPC.at<float>(row, col);
+		matAvg.at<float>(col) = sum / matPC.rows;
+	}
+	int iMax = 0;
+	float dMax = 0.0;
+	dMax = matAvg.at<float>(0);
+	for (int i = 0; i < matAvg.cols; i++)
+	{
+		if (matAvg.at<float>(i) > dMax)
+		{
+			dMax = matAvg.at<float>(i);
+			iMax = i;
+		}
+	}
+
+	if (dMax < 0.55)
+		return 0;
+	return	dL + iMax*dS;
+}
+
+/**@calculate the index of the most likely depth using parzen window method
+@param the Photo-Consistency Response matrix
+@param the lower depth bound
+@param the upper depth bound
+@param the depth step
+*/
+float calcDepthFromPCResponseParzen(const Mat& matPC, Metric metric, float dL, float dU, float dS)
+{
+	//finding the average of PC Response
+	Mat matAvg = Mat(1, matPC.cols, CV_32FC1);
+	for (int col = 0; col < matPC.cols; col++)
+	{
+		float sum = 0.0;
+		for (int row = 0; row < matPC.rows; row++)
+			sum += matPC.at<float>(row, col);
+		matAvg.at<float>(col) = sum / matPC.rows;
+	}
+	int iMax = 0;
+	float dMax = 0.0;
+	dMax = matAvg.at<float>(0);
+	for (int i = 0; i < matAvg.cols; i++)
+	{
+		if (matAvg.at<float>(i) > dMax)
+		{
+			dMax = matAvg.at<float>(i);
+			iMax = i;
+		}
+	}
+
+	if (dMax < 0.55)
+		return 0;
+	return	dL + iMax*dS;
+}
+
+/**@brief calculate the depth map from multiple images and their relative position from reference image
+@param matDepth the output depth map
+@param vecImageNames the input list of image names
+@param K the camera intrinsic matrix
+@param vecRotation list of rotations obtained by trackCamera()
+@param vecTranslation list of translations obtained by trackCamera()
+@param method for Photo-Consistency metric, Reconstruct::NCC etc
+@param patchSize size of the matching patch
+@param lower min value of searching depth
+@param upper max value of searching depth
+@param step step of searching depth
+*/
 void calcDepthMapFromMultiView(
 	Mat &matDepth,
 	vector<string> &vecImgNames,
@@ -82,6 +161,7 @@ void calcDepthMapFromMultiView(
 	vector<Mat> &vecRotation,
 	vector<Mat> &vecTranslation,
 	Reconstruct method,
+	Metric metric,
 	int patchSize,
 	float lower,
 	float upper,
@@ -99,40 +179,46 @@ void calcDepthMapFromMultiView(
 	int iSteps = (upper - lower) / step;
 
 	Mat matPt;
-	projectPointWithDepth(
-		K,
-		Point2f(180, 200),
-		vecRotation[1],
-		vecTranslation[1],
-		8,
-		20,
-		0.1,
-		matPt
-	);
-
 	Patch patchL(patchSize);
 	Patch patchR(patchSize);
-
+ 
 	//Mat matL = vecImg[0].clone();
 	//Mat matR = vecImg[1].clone();
 
-	//circle(matL, Point2f(180, 180), 3, Scalar(255, 255, 0), 1, CV_AA);
+	//Point2f ptTest = Point2f(485, 315);
+	//projectPointWithDepth(
+	//	K,
+	//	ptTest,
+	//	vecRotation[1],
+	//	vecTranslation[1],
+	//	lower ,
+	//	upper,
+	//	step,
+	//	matPt
+	//);
+
+	//circle(matL, ptTest, 3, Scalar(255, 255, 0), 1, CV_AA);
 	//for (int i = 0; i < matPt.rows; i++)
 	//{
 	//	circle(matR, Point(matPt.at<float>(i, 0), matPt.at<float>(i, 1)), 3, Scalar(255, 255, 0), 1, CV_AA);
+	//	circle(matR, Point(matPt.at<float>(i, 0), matPt.at<float>(i, 1)), 3, Scalar(255, 255, 0), 1, CV_AA);
 	//	if (matPt.at<float>(i, 0) >= patchSize / 2 && matPt.at<float>(i, 0) < iWidth - patchSize&&matPt.at<float>(i, 1) >= patchSize / 2 && matPt.at<float>(i, 1) <= iHeight - patchSize / 2)
 	//	{
-	//		getPatchFromImage(matImgRef, Point2f(180, 180), patchL);
+	//		getPatchFromImage(matImgRef, ptTest, patchL);
 	//		getPatchFromImage(vecImg[1], Point2f(matPt.at<float>(i, 0), matPt.at<float>(i, 1)), patchR);
 	//		//patchL.print();
 	//		//patchL.visualize();
 	//		//patchR.print();
 	//		//patchR.visualize();
-	//		cout << Patch::calcNCC(patchL, patchR, NCC::RGB) << endl;
+ //        	cout << Patch::calcNCC(patchL, patchR, metric) << endl;
+	//		cout << lower + i*step << endl;
 	//	}
-	//	showImage("L", matL, 0);
-	//	showImage("R", matR, 0);
- //	}
+
+	//	Mat matResult;
+	//	hconcat(matL, matR, matResult);
+	//	showImage("Result", matResult, 0);
+	//	matResult.release();
+	//}
 
 	for (int row = patchSize / 2; row < iHeight - patchSize / 2; row++)
 	{
@@ -158,8 +244,8 @@ void calcDepthMapFromMultiView(
 				projectPointWithDepth(
 					K,
 					ptL,
-					vecRotation[1],
-					vecTranslation[1],
+					vecRotation[iImgIdx],
+					vecTranslation[iImgIdx],
 					lower,
 					upper,
 					step,
@@ -170,19 +256,23 @@ void calcDepthMapFromMultiView(
 				{
 					ptR.x = matPtR.at<float>(i, 0);
 					ptR.y = matPtR.at<float>(i, 1);
-					if (ptR.x >= patchSize / 2 && ptR.x < iWidth - patchSize&&ptR.y >= patchSize / 2 && ptR.y <= iHeight - patchSize / 2)
+					if (ptR.x >= patchSize / 2 && ptR.x < iWidth - patchSize&&ptR.y >= patchSize / 2 && ptR.y < iHeight - patchSize / 2)
 					{
 						getPatchFromImage(matImgRef, ptL, patchL);
 						getPatchFromImage(vecImg[iImgIdx], ptR, patchR);
-						dPCScore = Patch::calcNCC(patchL, patchR, NCC::RGB);
+						dPCScore = Patch::calcNCC(patchL, patchR, metric);
 					}
 					else
 						dPCScore = 0;
 					matPCScore.at<float>(iImgIdx - 1, i) = dPCScore;
 				}	
 			}
-			float dRes = calcDepthFromPCResponse(matPCScore, lower, upper, step);
-			//cout << " x: " << col << " y: " << row << " d: " << dRes << endl;
+			float dRes = calcDepthFromPCResponse(matPCScore, metric, lower, upper, step);
+			//if (row == ptTest.y && col == ptTest.x)
+			//{
+			//	visualizePCScores(matPCScore, 500);
+			//	cout << " x: " << col << " y: " << row << " d: " << dRes << endl;
+			//}
 			matDepth.at<float>(row, col) = dRes;
 		}
 		cout << "Complete Percent: " << ((float)row) / iHeight * 100 << "%              " << "\r";

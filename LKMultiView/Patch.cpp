@@ -1,4 +1,4 @@
-#include "Patch.h"
+﻿#include "Patch.h"
 
 
 float * Patch::getPtr(RGB channel)
@@ -34,9 +34,9 @@ float Patch::stdDeri(RGB channel)
 	return sqrt(fresult / m_patchSize);
 }
 
-float Patch::calcNCC(Patch & p1, Patch & p2, NCC mode)
+float Patch::calcNCC(Patch & p1, Patch & p2, Metric metric)
 {
-	if (mode == NCC::RGB)
+	if (metric == Metric::NCCRGB)
 	{
 		//calculatie NCC for B channel
 		float *fptrData1 = p1.getPtr(RGB::B);
@@ -75,7 +75,41 @@ float Patch::calcNCC(Patch & p1, Patch & p2, NCC mode)
 		}
 		fresult += fresulttmp / (p1.m_patchSize*p1.stdDeri(RGB::R)*p2.stdDeri(RGB::R));
 
+        if (isnan<float>(fresult))
+			return 0;
 		return fresult / 3.f;
+	}
+	else if (metric == Metric::NCCSINGLE)
+	{
+
+	}
+	else if (metric == Metric::NSSD)
+	{
+		int size = p1.getSize() * 3;
+		float *fPtrData1 = p1.data;
+		float *fPtrData2 = p2.data;
+		float fmean1 = meanf(fPtrData1, size);
+		float fmean2 = meanf(fPtrData2, size);
+		float fstdev1 = stdevf(fPtrData1, size);
+		float fstdev2 = stdevf(fPtrData2, size);
+		float fsum = 0.f;
+		for (int i = 0; i < size; i++)
+			fsum += pow((fPtrData1[i] - fmean1) / fstdev1 - (fPtrData2[i] - fmean2) / fstdev2, 2);
+		return exp(-fsum/25);
+	}
+	else if (metric == Metric::SAD)
+	{
+		int size = p1.getSize() * 3;
+		float *fPtrData1 = p1.data;
+		float *fPtrData2 = p2.data;
+		float *fPtrDiff = new float[size];
+
+		for (int i = 0; i < size; i++)
+			fPtrDiff[i] = abs(fPtrData1[i]-fPtrData2[i]);
+
+		float fresult=exp(-sumf(fPtrDiff, size) / stdevf(fPtrDiff, size)/196);
+		delete[] fPtrDiff;
+		return fresult;
 	}
 	return 0.0;
 }

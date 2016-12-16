@@ -3,6 +3,8 @@
 #include <string>
 #include <opencv2\opencv.hpp>
 
+#include "Patch.h"
+
 using namespace std;
 using namespace cv;
 
@@ -18,6 +20,7 @@ void calcDepthMapFromMultiView(
 	vector<Mat> &vecRotation,
 	vector<Mat> &vecTranslation,
 	Reconstruct method,
+	Metric metric,
 	int patchSize = 5,
 	float lower = 1.0,
 	float upper = 11.0,

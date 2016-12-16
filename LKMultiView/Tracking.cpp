@@ -89,7 +89,6 @@ void match_features(vector<Mat>& vecDescriptorAll, vector<vector<DMatch>>& vecMa
 
 bool find_transform(Mat& K, vector<Point2f>& p1, vector<Point2f>& p2, Mat& R, Mat& T, Mat& mask)
 {
-	Mat F = findFundamentalMat(p1, p2, CV_FM_8POINT);
 
 	//calculate the essential matrix
 	Mat E = findEssentialMat(p1, p2, K, RANSAC, 0.9989999999, 1.0, mask);

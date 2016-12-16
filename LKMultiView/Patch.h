@@ -2,11 +2,13 @@
 #include <vector>
 #include <opencv2\opencv.hpp>
 
+#include "Util.h"
+
 using namespace std;
 using namespace cv;
 
-enum class NCC {
-	RGB, SINGLE, MIXED
+enum class Metric {
+	NCCRGB, NCCSINGLE, NSSD, SAD, ROBUST, PARZEN
 };
 
 enum class RGB
@@ -77,7 +79,7 @@ public:
 		waitKey(0);
 		destroyWindow("visualize patch");
 	}
-	static float calcNCC(Patch & p1, Patch & p2, NCC mode);
+	static float calcNCC(Patch & p1, Patch & p2, Metric metric);
 };
 
 void getPatchFromImage(const Mat & matImg, Point2f &pt, Patch &patch);
