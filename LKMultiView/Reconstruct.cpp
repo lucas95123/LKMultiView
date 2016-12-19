@@ -1,5 +1,8 @@
+#include <GCoptimization.h>
+
 #include "Reconstruct.h"
 #include "Util.h"
+
 
 /**@brief project points in the reference frame to other frame with specified depth
 @param Kref intrinsic matrix of the reference camera
@@ -10,7 +13,9 @@
 @param depth the specified depth
 */
 void projectPointWithDepth(
-	const Matx33d &K, 
+	const Matx33d &K,
+	const Mat&rmatRef,
+	const Mat&tmatRef,
 	Point2f &pt, 
 	const Mat &rmat, 
 	const Mat &tmat, 
@@ -28,13 +33,28 @@ void projectPointWithDepth(
 	//equals world coordinate so only multi the inv of intrinsic
 	Vec3f vecPt3D = K.inv()*Vec3f(pt.x, pt.y, 1);
 
+	//projection matrix's inverse from rotation and translation
+	Mat projRefInv=Mat::zeros(4, 4, CV_32FC1);
+	Mat tmpRotation = rmatRef.t();
+	Mat tmpTranslation = -rmatRef.t()*tmatRef;
+	tmpRotation.convertTo(projRefInv(Range(0, 3), Range(0, 3)), CV_32FC1);
+	tmpTranslation.convertTo(projRefInv(Range(0, 3), Range(3, 4)), CV_32FC1);
+	projRefInv.at<float>(3, 3) = 1.f;
+
 	//multiply by depth to get the actual guessed 3d point coordinate
+	Vec4f vecCoord;
+	Mat res(4, 1, CV_32FC1);
 	for (int i = 0; i < count; i++)
 	{
 		float depth = lower + step*i;
-		matPt.at<float>(i, 0) = vecPt3D(0)*depth;
-		matPt.at<float>(i, 1) = vecPt3D(1)*depth;
-		matPt.at<float>(i, 2) = vecPt3D(2)*depth;
+		vecCoord(0) = vecPt3D(0)*depth;
+		vecCoord(1) = vecPt3D(1)*depth;
+		vecCoord(2) = vecPt3D(2)*depth;
+		vecCoord(3) = 1.f;
+		res = projRefInv*Mat(vecCoord);
+		matPt.at<float>(i,0) = res.at<float>(0);
+		matPt.at<float>(i,1) = res.at<float>(1);
+		matPt.at<float>(i,2) = res.at<float>(2);
 	}
 
 	//convert from rotation matrix to vector
@@ -162,7 +182,7 @@ float calcDepthFromPCResponseParzen(
 	Mat matLocalMaxima=Mat::zeros(matPC.rows, matPC.cols, CV_32FC1);
 	for (int i = 0; i < matPC.rows; i++)
 	{
-		for (int j = 1; j < matPC.cols; j++)
+		for (int j = 1; j < matPC.cols-1; j++)
 		{
 			if (matPC.at<float>(i, j) > matPC.at<float>(i, j - 1) && matPC.at<float>(i, j) > matPC.at<float>(i, j + 1))
 				matLocalMaxima.at<float>(i, j) = matPC.at<float>(i, j);
@@ -250,16 +270,20 @@ void calcDepthMapFromMultiView(
 	Mat matPt;
 	Patch patchL(patchSize);
 	Patch patchR(patchSize);
- 
-	//Mat matL = vecImg[0].clone();
-	//Mat matR = vecImg[1].clone();
 
-	Point2f ptTest = Point2f(497, 247);
+	//int testIndex = 2;
+	//
+	//Mat matL = vecImg[0].clone();
+	//Mat matR = vecImg[testIndex].clone();
+
+	//Point2f ptTest = Point2f(397, 329);
 	//projectPointWithDepth(
 	//	K,
+	//	vecRotation[0],
+	//	vecTranslation[0],
 	//	ptTest,
-	//	vecRotation[1],
-	//	vecTranslation[1],
+	//	vecRotation[testIndex],
+	//	vecTranslation[testIndex],
 	//	lower ,
 	//	upper,
 	//	step,
@@ -269,18 +293,20 @@ void calcDepthMapFromMultiView(
 	//circle(matL, ptTest, 3, Scalar(255, 255, 0), 1, CV_AA);
 	//for (int i = 0; i < matPt.rows; i++)
 	//{
-	//	circle(matR, Point(matPt.at<float>(i, 0), matPt.at<float>(i, 1)), 3, Scalar(255, 255, 0), 1, CV_AA);
-	//	circle(matR, Point(matPt.at<float>(i, 0), matPt.at<float>(i, 1)), 3, Scalar(255, 255, 0), 1, CV_AA);
+	//	circle(matR, Point(matPt.at<float>(i, 0), matPt.at<float>(i, 1)), 3, Scalar(255, 255, 0), 1, CV_AA);                                                        
 	//	if (matPt.at<float>(i, 0) >= patchSize / 2 && matPt.at<float>(i, 0) < iWidth - patchSize&&matPt.at<float>(i, 1) >= patchSize / 2 && matPt.at<float>(i, 1) <= iHeight - patchSize / 2)
 	//	{
 	//		getPatchFromImage(matImgRef, ptTest, patchL);
-	//		getPatchFromImage(vecImg[1], Point2f(matPt.at<float>(i, 0), matPt.at<float>(i, 1)), patchR);
+	//		getPatchFromImage(vecImg[testIndex], Point2f(matPt.at<float>(i, 0), matPt.at<float>(i, 1)), patchR);
 	//		//patchL.print();
-	//		//patchL.visualize();
+	//		Mat matPatch1=patchL.visualize();
 	//		//patchR.print();
-	//		//patchR.visualize();
-    //     	cout << Patch::calcNCC(patchL, patchR, metric) << endl;
+	//		Mat matPatch2=patchR.visualize();
+	//     	cout << Patch::calcNCC(patchL, patchR, metric) << endl;
 	//		cout << lower + i*step << endl;
+	//		Mat matResult;
+	//		hconcat(matPatch1, matPatch2, matResult);
+	//		showImage("result", matResult, 0, WINDOW_KEEPRATIO);
 	//	}
 
 	//	Mat matResult;
@@ -312,6 +338,8 @@ void calcDepthMapFromMultiView(
 
 				projectPointWithDepth(
 					K,
+					vecRotation[0],
+					vecTranslation[0],
 					ptL,
 					vecRotation[iImgIdx],
 					vecTranslation[iImgIdx],
@@ -336,7 +364,7 @@ void calcDepthMapFromMultiView(
 					matPCScore.at<float>(iImgIdx - 1, i) = dPCScore;
 				}	
 			}
-			float dRes = calcDepthFromPCResponseParzen(matPCScore, metric, lower, upper, step, 0.6, 3, false);
+			float dRes = calcDepthFromPCResponse(matPCScore, metric, lower, upper, step, 0.5, false);
 			//cout << dRes << endl;
 			//if (row == ptTest.y && col == ptTest.x)
 			//{

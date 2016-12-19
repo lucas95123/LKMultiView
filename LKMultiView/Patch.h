@@ -61,7 +61,7 @@ public:
 		}
 		cout << endl;
 	}
-	void visualize()
+	Mat visualize()
 	{
 		int size = sqrt(m_patchSize);
 		Mat matVis(size, size, CV_8UC3);
@@ -74,10 +74,7 @@ public:
 				matVis.at<Vec3b>(i, j)[2] = data[i*size + j + m_patchSize * 2];
 			}
 		}
-		namedWindow("visualize patch", WINDOW_KEEPRATIO);
-		imshow("visualize patch", matVis);
-		waitKey(0);
-		destroyWindow("visualize patch");
+		return matVis;
 	}
 	static float calcNCC(Patch & p1, Patch & p2, Metric metric);
 };
