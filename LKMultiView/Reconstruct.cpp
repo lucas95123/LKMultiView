@@ -9,7 +9,15 @@
 @param K2 intrinsic matrix of the frame to be projected
 @param depth the specified depth
 */
-void projectPointWithDepth(const Matx33d &K, Point2f &pt, const Mat &rmat, const Mat &tmat, float lower, float upper, float step, Mat &matPtR)
+void projectPointWithDepth(
+	const Matx33d &K, 
+	Point2f &pt, 
+	const Mat &rmat, 
+	const Mat &tmat, 
+	float lower, 
+	float upper, 
+	float step, 
+	Mat &matPtR)
 {
 	int count = (upper - lower) / step;
 
@@ -46,7 +54,14 @@ void projectPointWithDepth(const Matx33d &K, Point2f &pt, const Mat &rmat, const
 @param the upper depth bound
 @param the depth step
 */
-float calcDepthFromPCResponse(const Mat& matPC, Metric metric, float dL, float dU, float dS)
+float calcDepthFromPCResponse(
+	const Mat& matPC, 
+	Metric metric, 
+	float dL, 
+	float dU, 
+	float dS, 
+	float threshold, 
+	bool visualize=false)
 {
 	//finding the average of PC Response
 	Mat matAvg = Mat(1, matPC.cols, CV_32FC1);
@@ -69,7 +84,10 @@ float calcDepthFromPCResponse(const Mat& matPC, Metric metric, float dL, float d
 		}
 	}
 
-	if (dMax < 0.55)
+	if(visualize)
+		visualizePCScores(matPC, matAvg, 500);
+
+	if (dMax < 0.7)
 		return 0;
 	return	dL + iMax*dS;
 }
@@ -80,17 +98,30 @@ float calcDepthFromPCResponse(const Mat& matPC, Metric metric, float dL, float d
 @param the upper depth bound
 @param the depth step
 */
-float calcDepthFromPCResponseRobust(const Mat& matPC, Metric metric, float dL, float dU, float dS)
+float calcDepthFromPCResponseRobust(
+	const Mat& matPC, 
+	Metric metric, 
+	float dL, 
+	float dU, 
+	float dS, 
+	float threshold,
+	bool visualize=false)
 {
 	//finding the average of PC Response
 	Mat matAvg = Mat(1, matPC.cols, CV_32FC1);
+	float ftmp = 0.f;
 	for (int col = 0; col < matPC.cols; col++)
 	{
 		float sum = 0.0;
 		for (int row = 0; row < matPC.rows; row++)
-			sum += matPC.at<float>(row, col);
+		{
+			ftmp = matPC.at<float>(row, col);
+			sum += ftmp < 0 ? 0 : ftmp;
+		}
 		matAvg.at<float>(col) = sum / matPC.rows;
 	}
+
+	//finding global maxima of the averaged curve
 	int iMax = 0;
 	float dMax = 0.0;
 	dMax = matAvg.at<float>(0);
@@ -103,7 +134,10 @@ float calcDepthFromPCResponseRobust(const Mat& matPC, Metric metric, float dL, f
 		}
 	}
 
-	if (dMax < 0.55)
+	if(visualize)
+		visualizePCScores(matPC, matAvg, 500);
+
+	if (dMax < threshold)
 		return 0;
 	return	dL + iMax*dS;
 }
@@ -114,30 +148,65 @@ float calcDepthFromPCResponseRobust(const Mat& matPC, Metric metric, float dL, f
 @param the upper depth bound
 @param the depth step
 */
-float calcDepthFromPCResponseParzen(const Mat& matPC, Metric metric, float dL, float dU, float dS)
+float calcDepthFromPCResponseParzen(
+	const Mat& matPC, 
+	Metric metric, 
+	float dL, 
+	float dU, 
+	float dS,
+	float threshold,
+	int kernelSize,
+	bool visualize)
 {
-	//finding the average of PC Response
-	Mat matAvg = Mat(1, matPC.cols, CV_32FC1);
-	for (int col = 0; col < matPC.cols; col++)
+	//finds local maximas
+	Mat matLocalMaxima=Mat::zeros(matPC.rows, matPC.cols, CV_32FC1);
+	for (int i = 0; i < matPC.rows; i++)
 	{
-		float sum = 0.0;
-		for (int row = 0; row < matPC.rows; row++)
-			sum += matPC.at<float>(row, col);
-		matAvg.at<float>(col) = sum / matPC.rows;
+		for (int j = 1; j < matPC.cols; j++)
+		{
+			if (matPC.at<float>(i, j) > matPC.at<float>(i, j - 1) && matPC.at<float>(i, j) > matPC.at<float>(i, j + 1))
+				matLocalMaxima.at<float>(i, j) = matPC.at<float>(i, j);
+		}
 	}
+
+	Mat matResult=Mat::zeros(1, matPC.cols, CV_32FC1);
+	//using parzen window
+	GaussianKernel kernel = GaussianKernel(3);
+	for (int i = kernelSize / 2; i < matLocalMaxima.cols - kernelSize / 2; i++)
+	{
+		float sum = 0.f;
+		int count = 0.f;
+		for (int j = i - kernelSize / 2; j < i + kernelSize / 2; j++)
+		{
+			for (int k = 0; k < matLocalMaxima.rows; k++)
+			{
+				float tmp = matLocalMaxima.at<float>(k, j);
+				if (tmp == 0.f)
+					continue;
+				else
+				{
+					sum += tmp*kernel.getVal(j-i);
+					count++;
+				}
+			}
+		}
+		matResult.at<float>(0,i) = sum;
+	}
+
+	//finding global maxima of the averaged curve
 	int iMax = 0;
 	float dMax = 0.0;
-	dMax = matAvg.at<float>(0);
-	for (int i = 0; i < matAvg.cols; i++)
+	dMax = matResult.at<float>(0);
+	for (int i = 0; i < matResult.cols; i++)
 	{
-		if (matAvg.at<float>(i) > dMax)
+		if (matResult.at<float>(i) > dMax)
 		{
-			dMax = matAvg.at<float>(i);
+			dMax = matResult.at<float>(i);
 			iMax = i;
 		}
 	}
 
-	if (dMax < 0.55)
+	if (dMax < 0.6)
 		return 0;
 	return	dL + iMax*dS;
 }
@@ -185,7 +254,7 @@ void calcDepthMapFromMultiView(
 	//Mat matL = vecImg[0].clone();
 	//Mat matR = vecImg[1].clone();
 
-	//Point2f ptTest = Point2f(485, 315);
+	Point2f ptTest = Point2f(497, 247);
 	//projectPointWithDepth(
 	//	K,
 	//	ptTest,
@@ -210,7 +279,7 @@ void calcDepthMapFromMultiView(
 	//		//patchL.visualize();
 	//		//patchR.print();
 	//		//patchR.visualize();
- //        	cout << Patch::calcNCC(patchL, patchR, metric) << endl;
+    //     	cout << Patch::calcNCC(patchL, patchR, metric) << endl;
 	//		cout << lower + i*step << endl;
 	//	}
 
@@ -267,10 +336,13 @@ void calcDepthMapFromMultiView(
 					matPCScore.at<float>(iImgIdx - 1, i) = dPCScore;
 				}	
 			}
-			float dRes = calcDepthFromPCResponse(matPCScore, metric, lower, upper, step);
+			float dRes = calcDepthFromPCResponseParzen(matPCScore, metric, lower, upper, step, 0.6, 3, false);
+			//cout << dRes << endl;
 			//if (row == ptTest.y && col == ptTest.x)
 			//{
-			//	visualizePCScores(matPCScore, 500);
+			//	float dRes = calcDepthFromPCResponseParzen(matPCScore, metric, lower, upper, step, 0.7, 3, true);
+			//	cout << " x: " << col << " y: " << row << " d: " << dRes << endl;
+			//	dRes = calcDepthFromPCResponseRobust(matPCScore, metric, lower, upper, step, 0.6, true);
 			//	cout << " x: " << col << " y: " << row << " d: " << dRes << endl;
 			//}
 			matDepth.at<float>(row, col) = dRes;

@@ -71,7 +71,7 @@ public:
 			{
 				matVis.at<Vec3b>(i, j)[0] = data[i*size + j];
 				matVis.at<Vec3b>(i, j)[1] = data[i*size + j + m_patchSize];
-				matVis.at<Vec3b>(i, j)[1] = data[i*size + j + m_patchSize * 2];
+				matVis.at<Vec3b>(i, j)[2] = data[i*size + j + m_patchSize * 2];
 			}
 		}
 		namedWindow("visualize patch", WINDOW_KEEPRATIO);
