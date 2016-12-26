@@ -1,0 +1,71 @@
+﻿  eucsbademo.c
+C:\Users\v-kulu\Desktop\sba-1.6\demo\eucsbademo.c(1680): warning C4996: 'sprintf': This function or variable may be unsafe. Consider using sprintf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1769): note: 参见“sprintf”的声明
+C:\Users\v-kulu\Desktop\sba-1.6\demo\eucsbademo.c(1703): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: 参见“fopen”的声明
+C:\Users\v-kulu\Desktop\sba-1.6\demo\eucsbademo.c(1711): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: 参见“fopen”的声明
+C:\Users\v-kulu\Desktop\sba-1.6\demo\eucsbademo.c(1721): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: 参见“fopen”的声明
+C:\Users\v-kulu\Desktop\sba-1.6\demo\eucsbademo.c(1731): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: 参见“fopen”的声明
+  imgproj.c
+  readparams.c
+C:\Users\v-kulu\Desktop\sba-1.6\demo\readparams.c(35): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1193): note: 参见“fscanf”的声明
+C:\Users\v-kulu\Desktop\sba-1.6\demo\readparams.c(55): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1193): note: 参见“fscanf”的声明
+C:\Users\v-kulu\Desktop\sba-1.6\demo\readparams.c(73): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1193): note: 参见“fscanf”的声明
+C:\Users\v-kulu\Desktop\sba-1.6\demo\readparams.c(142): warning C4996: 'sscanf': This function or variable may be unsafe. Consider using sscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(2254): note: 参见“sscanf”的声明
+C:\Users\v-kulu\Desktop\sba-1.6\demo\readparams.c(384): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1193): note: 参见“fscanf”的声明
+C:\Users\v-kulu\Desktop\sba-1.6\demo\readparams.c(405): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: 参见“fopen”的声明
+C:\Users\v-kulu\Desktop\sba-1.6\demo\readparams.c(410): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: 参见“fopen”的声明
+C:\Users\v-kulu\Desktop\sba-1.6\demo\readparams.c(467): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: 参见“fopen”的声明
+C:\Users\v-kulu\Desktop\sba-1.6\demo\readparams.c(483): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(1193): note: 参见“fscanf”的声明
+C:\Users\v-kulu\Desktop\sba-1.6\demo\readparams.c(496): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: 参见“fopen”的声明
+C:\Users\v-kulu\Desktop\sba-1.6\demo\readparams.c(626): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  C:\Program Files (x86)\Windows Kits\10\Include\10.0.10240.0\ucrt\stdio.h(205): note: 参见“fopen”的声明
+  正在生成代码...
+LINK : warning LNK4098: 默认库“MSVCRTD”与其他库的使用冲突；请使用 /NODEFAULTLIB:library
+LINK : warning LNK4098: 默认库“LIBCMT”与其他库的使用冲突；请使用 /NODEFAULTLIB:library
+sba.lib(sba_chkjac.obj) : warning LNK4049: 已导入本地定义的符号 ___acrt_iob_func
+sba.lib(sba_levmar_wrap.obj) : warning LNK4217: 本地定义的符号 ___acrt_iob_func 在函数 _sba_motstr_Qs_fdjac 中导入
+sba.lib(sba_levmar.obj) : warning LNK4217: 本地定义的符号 ___acrt_iob_func 在函数 _sba_str_levmar_x 中导入
+sba.lib(sba_crsm.obj) : warning LNK4049: 已导入本地定义的符号 ___acrt_iob_func
+sba.lib(sba_lapack.obj) : warning LNK4049: 已导入本地定义的符号 ___acrt_iob_func
+sba.lib(sba_chkjac.obj) : warning LNK4049: 已导入本地定义的符号 ___stdio_common_vfprintf
+sba.lib(sba_levmar_wrap.obj) : warning LNK4217: 本地定义的符号 ___stdio_common_vfprintf 在函数 __vfprintf_l 中导入
+sba.lib(sba_levmar.obj) : warning LNK4217: 本地定义的符号 ___stdio_common_vfprintf 在函数 _sba_str_levmar_x 中导入
+sba.lib(sba_crsm.obj) : warning LNK4049: 已导入本地定义的符号 ___stdio_common_vfprintf
+sba.lib(sba_lapack.obj) : warning LNK4049: 已导入本地定义的符号 ___stdio_common_vfprintf
+sba.lib(sba_chkjac.obj) : warning LNK4049: 已导入本地定义的符号 _free
+sba.lib(sba_levmar_wrap.obj) : warning LNK4217: 本地定义的符号 _free 在函数 _sba_motstr_Qs_fdjac 中导入
+sba.lib(sba_levmar.obj) : warning LNK4217: 本地定义的符号 _free 在函数 _sba_motstr_levmar_x 中导入
+sba.lib(sba_crsm.obj) : warning LNK4049: 已导入本地定义的符号 _free
+sba.lib(sba_lapack.obj) : warning LNK4217: 本地定义的符号 _free 在函数 _sba_symat_invert_LU 中导入
+sba.lib(sba_chkjac.obj) : warning LNK4217: 本地定义的符号 _malloc 在函数 _emalloc_ 中导入
+sba.lib(sba_levmar_wrap.obj) : warning LNK4217: 本地定义的符号 _malloc 在函数 _sba_motstr_Qs_fdjac 中导入
+sba.lib(sba_levmar.obj) : warning LNK4217: 本地定义的符号 _malloc 在函数 _sba_motstr_levmar_x 中导入
+sba.lib(sba_crsm.obj) : warning LNK4217: 本地定义的符号 _malloc 在函数 _sba_crsm_alloc 中导入
+sba.lib(sba_lapack.obj) : warning LNK4217: 本地定义的符号 _malloc 在函数 _sba_symat_invert_LU 中导入
+sba.lib(sba_chkjac.obj) : warning LNK4217: 本地定义的符号 _exit 在函数 __vfprintf_l 中导入
+sba.lib(sba_levmar_wrap.obj) : warning LNK4217: 本地定义的符号 _exit 在函数 _sba_motstr_Qs_fdjac 中导入
+sba.lib(sba_levmar.obj) : warning LNK4217: 本地定义的符号 _exit 在函数 _sba_motstr_levmar_x 中导入
+sba.lib(sba_crsm.obj) : warning LNK4217: 本地定义的符号 _exit 在函数 __vfprintf_l 中导入
+sba.lib(sba_lapack.obj) : warning LNK4217: 本地定义的符号 _exit 在函数 _sba_symat_invert_LU 中导入
+sba.lib(sba_levmar.obj) : warning LNK4217: 本地定义的符号 __finite 在函数 _sba_motstr_levmar_x 中导入
+libf2c.lib(wrtfmt1.obj) : error LNK2001: 无法解析的外部符号 ___iob_func
+libf2c.lib(fmt1.obj) : error LNK2001: 无法解析的外部符号 ___iob_func
+libf2c.lib(f77_aloc1.obj) : error LNK2001: 无法解析的外部符号 ___iob_func
+libf2c.lib(err1.obj) : error LNK2001: 无法解析的外部符号 ___iob_func
+libf2c.lib(sig_die1.obj) : error LNK2001: 无法解析的外部符号 ___iob_func
+MSVCRTD.lib(_chandler4gs_.obj) : error LNK2019: 无法解析的外部符号 __except_handler4_common，该符号在函数 __except_handler4 中被引用
+C:\Users\v-kulu\Desktop\sba-1.6\build\demo\Debug\eucsbademo.exe : fatal error LNK1120: 2 个无法解析的外部命令

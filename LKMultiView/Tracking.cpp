@@ -97,7 +97,7 @@ bool find_transform(Mat& K, vector<Point2f>& p1, vector<Point2f>& p2, Mat& R, Ma
 	double feasible_count = countNonZero(mask);
 	cout << (int)feasible_count << " -in- " << p1.size() << endl;
 	//if there are too much outliers return false
-	if (feasible_count <= 15 || (feasible_count / p1.size()) < 0.6)
+	if (feasible_count <= 10 || (feasible_count / p1.size()) < 0.6)
 		return false;
 
 	//recover the pose from essential matrix
@@ -346,6 +346,10 @@ void init_structure(
 		correspond_struct_idx[1][matches[i].trainIdx] = idx;
 		++idx;
 	}
+}
+
+void sparseBundleAdjustment()
+{
 }
 
 void trackCamera(

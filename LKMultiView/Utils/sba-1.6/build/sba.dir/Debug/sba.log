@@ -1,0 +1,9 @@
+﻿  Building Custom Rule C:/Users/v-kulu/Desktop/sba-1.6/CMakeLists.txt
+  CMake does not need to re-run because C:\Users\v-kulu\Desktop\sba-1.6\build\CMakeFiles\generate.stamp is up-to-date.
+  sba_levmar.c
+  sba_levmar_wrap.c
+  sba_lapack.c
+  sba_crsm.c
+  sba_chkjac.c
+  正在生成代码...
+  sba.vcxproj -> C:\Users\v-kulu\Desktop\sba-1.6\build\Debug\sba.lib
